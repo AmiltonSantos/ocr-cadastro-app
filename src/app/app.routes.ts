@@ -9,9 +9,5 @@ export const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full',
-  },
-  {
-    path: 'capture',
-    loadComponent: () => import('./pages/capture/capture.page').then( m => m.CapturePage)
-  },
+  }
 ];

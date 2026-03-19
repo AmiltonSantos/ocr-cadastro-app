@@ -1,20 +1,75 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Capturar Ficha</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button color="warning" fill="solid" (click)="takePicture()" [disabled]="isLoading">
+        <ion-icon name="camera" slot="start"></ion-icon>
+        {{ showCropper ? 'Nova Foto' : 'Tirar Foto' }}
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  
+  <!-- Loading -->
+  @if (isLoading) {
+    <ion-progress-bar type="indeterminate"></ion-progress-bar>
+  }
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <!-- Cropper -->
+  @if (showCropper) {
+    <div class="cropper-container">
+
+      <div class="cropper-header">
+        <div class="header-dot"></div>
+        <span class="header-title">Recorte a imagem</span>
+        <span class="header-badge">4 : 3</span>
+      </div>
+
+      <image-cropper 
+        class="custom-cropper"
+        [imageFile]="imageFile" 
+        [maintainAspectRatio]="false" 
+        [aspectRatio]="4 / 3" 
+        format="png"
+        (imageCropped)="imageCropped($event)" 
+        (imageLoaded)="imageLoaded()" 
+        (cropperReady)="cropperReady()"
+        (loadImageFailed)="loadImageFailed()">
+      </image-cropper>
+
+      @if (!hasValidImage) {
+        <div class="cropper-hint">
+          <div class="hint-dot"></div>
+          <p>Ajuste o recorte para continuar</p>
+        </div>
+      }
+
+      <div class="cropper-actions">
+        <ion-button expand="block" (click)="processImage()" [disabled]="!hasValidImage || isLoading">
+          <ion-icon name="scan" slot="start"></ion-icon>
+          Processar imagem
+        </ion-button>
+        <ion-button expand="block" (click)="resetCropper()" [disabled]="isLoading">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Cancelar
+        </ion-button>
+      </div>
+
+    </div>
+  }
+
+  <!-- Preview -->
+  @if (croppedImageBase64 && !showCropper) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Preview</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <img [src]="croppedImageBase64" alt="Imagem recortada">
+      </ion-card-content>
+    </ion-card>
+  }
 </ion-content>
