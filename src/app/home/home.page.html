@@ -21,11 +21,15 @@
   <!-- Cropper -->
   @if (showCropper) {
     <div class="cropper-container">
-
-      <div class="cropper-header">
-        <div class="header-dot"></div>
-        <span class="header-title">Recorte a imagem</span>
-        <span class="header-badge">4 : 3</span>
+      <div class="cropper-actions">
+        <ion-button expand="block" (click)="processImage()" [disabled]="!hasValidImage || isLoading">
+          <ion-icon name="scan" slot="start"></ion-icon>
+          Processar imagem
+        </ion-button>
+        <ion-button expand="block" (click)="resetCropper()" [disabled]="isLoading">
+          <ion-icon name="refresh" slot="start"></ion-icon>
+          Cancelar
+        </ion-button>
       </div>
 
       <image-cropper 
@@ -40,22 +44,10 @@
         (loadImageFailed)="loadImageFailed()">
       </image-cropper>
 
-      @if (!hasValidImage) {
-        <div class="cropper-hint">
-          <div class="hint-dot"></div>
-          <p>Ajuste o recorte para continuar</p>
-        </div>
-      }
-
-      <div class="cropper-actions">
-        <ion-button expand="block" (click)="processImage()" [disabled]="!hasValidImage || isLoading">
-          <ion-icon name="scan" slot="start"></ion-icon>
-          Processar imagem
-        </ion-button>
-        <ion-button expand="block" (click)="resetCropper()" [disabled]="isLoading">
-          <ion-icon name="refresh" slot="start"></ion-icon>
-          Cancelar
-        </ion-button>
+      <div class="cropper-header">
+        <div class="header-dot"></div>
+        <span class="header-title">Recorte a imagem</span>
+        <span class="header-badge">4 : 3</span>
       </div>
 
     </div>
