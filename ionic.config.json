@@ -1,0 +1,7 @@
+{
+  "name": "ocr-cadastro-app",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

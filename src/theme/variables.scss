@@ -1,0 +1,13 @@
+// For information on how to create your own theme, please refer to:
+// https://ionicframework.com/docs/theming/
+:root {
+  --cropper-border-radius: 12px;
+  --cropper-overlay-color: rgba(0, 0, 0, 0.5);
+  --cropper-handle-color: var(--ion-color-primary);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cropper-overlay-color: rgba(255, 255, 255, 0.1);
+  }
+}
