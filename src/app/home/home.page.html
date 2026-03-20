@@ -22,7 +22,7 @@
   @if (showCropper) {
     <div class="cropper-container">
       <div class="cropper-actions">
-        <ion-button expand="block" (click)="processImage()" [disabled]="!hasValidImage || isLoading">
+        <ion-button expand="block" (click)="processImage()">
           <ion-icon name="scan" slot="start"></ion-icon>
           Processar imagem
         </ion-button>

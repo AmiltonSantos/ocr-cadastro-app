@@ -20,6 +20,7 @@ import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { camera, scan, refresh, alertCircle } from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
+import { OcrService } from '../services/ocr.service';
 
 @Component({
     selector: 'app-home',
@@ -53,7 +54,9 @@ export class HomePage {
 
     imageFile: File | undefined = undefined;
 
-    constructor(private toastController: ToastController) {
+    constructor(private toastController: ToastController,
+        private ocrService: OcrService
+    ) {
         addIcons({ camera, scan, refresh, alertCircle });
     }
 
@@ -125,36 +128,6 @@ export class HomePage {
         this.showCropper = true;
     }
 
-    // async takePicture(): Promise<void> {
-    //     try {
-    //         this.isLoading = true;
-    //         const image = await Camera.getPhoto({
-    //             quality: 90,
-    //             allowEditing: false,
-    //             resultType: CameraResultType.DataUrl,
-    //             source: CameraSource.Camera
-    //         });
-
-    //         if (!image.dataUrl) throw new Error('Imagem não capturada');
-
-    //         // Converte direto para File e passa via [imageFile]
-    //         const blob = this.base64ToBlob(image.dataUrl);
-    //         this.imageFile = new File([blob], 'ficha-cadastral.jpg', { type: 'image/jpeg' });
-
-    //         // Aguarda um ciclo para garantir que o DOM atualizou
-    //         await new Promise(resolve => setTimeout(resolve, 50));
-
-    //         // Depois mostra o cropper
-    //         this.showCropper = true;
-
-    //     } catch (error) {
-    //         console.error('Erro ao capturar imagem:', error);
-    //         this.showToast('Erro ao capturar imagem', 'danger');
-    //     } finally {
-    //         this.isLoading = false;
-    //     }
-    // }
-
     private base64ToBlob(base64: string): Blob {
         const byteString = atob(base64.split(',')[1]);
         const ab = new ArrayBuffer(byteString.length);
@@ -167,17 +140,16 @@ export class HomePage {
         return new Blob([ab], { type: 'image/jpeg' });
     }
 
-    // private async dataUrlToFile(dataUrl: string, filename: string): Promise<File> {
-    //     const response = await fetch(dataUrl);
-    //     const blob = await response.blob();
-    //     return new File([blob], filename, { type: blob.type });
-    // }
-
     imageCropped(event: ImageCroppedEvent) {
         console.log('Imagem recortada:', event);
-        if (event.base64) {
-            this.croppedImageBase64 = event.base64;
-            this.hasValidImage = true;
+        if (event.blob) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.croppedImageBase64 = e.target.result;
+                this.hasValidImage = true;
+                console.log('Base64 salvo com sucesso');
+            };
+            reader.readAsDataURL(event.blob);
         }
     }
 
@@ -196,25 +168,26 @@ export class HomePage {
     }
 
     async processImage() {
-        if (!this.hasValidImage) {
-            this.showToast('Recorte uma imagem primeiro', 'warning');
-            return;
-        }
 
         this.isLoading = true;
 
         try {
-            // Simula processamento OCR
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            this.showToast('Imagem processada com sucesso!', 'success');
+            const jsonText = await this.ocrService.extractText(this.croppedImageBase64);
+            const dados = JSON.parse(jsonText);
+
+            console.log('Dados extraídos:', dados);
+            this.showToast('Dados extraídos com sucesso!', 'success');
+
+            // Aqui você navega para a próxima tela passando os dados
+            // this.router.navigate(['/cadastro'], { state: { dados } });
+
         } catch (error) {
-            console.error('Erro no processamento:', error);
-            this.showToast('Erro ao processar imagem', 'danger');
+            console.error('Erro ao processar:', error);
+            this.showToast('Erro ao extrair dados da imagem', 'danger');
         } finally {
             this.isLoading = false;
         }
     }
-
     private async showToast(message: string, color: string = 'primary') {
         const toast = await this.toastController.create({
             message,
@@ -227,7 +200,7 @@ export class HomePage {
 
     resetCropper() {
         this.showCropper = false;
-        this.imageFile = undefined;  // ← era null
+        this.imageFile = undefined;
         this.croppedImageBase64 = '';
         this.hasValidImage = false;
     }
