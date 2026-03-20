@@ -173,9 +173,8 @@ export class HomePage {
 
         try {
             const jsonText = await this.ocrService.extractText(this.croppedImageBase64);
-            const dados = JSON.parse(jsonText);
 
-            console.log('Dados extraídos:', dados);
+            console.log('Dados extraídos:', jsonText);
             this.showToast('Dados extraídos com sucesso!', 'success');
 
             // Aqui você navega para a próxima tela passando os dados

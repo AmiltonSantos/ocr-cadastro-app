@@ -80,12 +80,26 @@ export class AiModelsService {
         const content: any[] = [];
 
         if (imageBase64) {
-            content.push({
-                type: 'image',
-                image: imageBase64.includes('base64,')
-                    ? imageBase64
-                    : `data:image/jpeg;base64,${imageBase64}`
-            });
+            const base64Data = imageBase64.includes('base64,')
+                ? imageBase64.split('base64,')[1]
+                : imageBase64;
+
+            if (this.activeProvider === 'google') {
+                // Google exige base64 puro com mimeType
+                content.push({
+                    type: 'image',
+                    image: base64Data,
+                    mimeType: 'image/jpeg'
+                });
+            } else {
+                // OpenAI, Anthropic, Groq aceitam data URL
+                content.push({
+                    type: 'image',
+                    image: imageBase64.includes('base64,')
+                        ? imageBase64
+                        : `data:image/jpeg;base64,${imageBase64}`
+                });
+            }
         }
 
         content.push({ type: 'text', text: prompt });
