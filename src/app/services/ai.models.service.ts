@@ -17,30 +17,34 @@ export interface AiModelConfig {
 @Injectable({ providedIn: 'root' })
 export class AiModelsService {
 
+    // Por padrão, usamos o Groq porque é gratuito e tem suporte a imagens. Mas você pode mudar para outro provedor nas configurações.
+    private activeProvider: AiProvider = 'groq';
+
     private configs: Record<AiProvider, AiModelConfig> = {
-        openai: {
-            provider: 'openai',
-            model: 'gpt-4o-mini',
-            apiKey: environment.openaiApiKey
-        },
+        // GRATIS
         google: {
             provider: 'google',
             model: 'gemini-2.5-flash',
             apiKey: environment.googleApiKey
         },
-        anthropic: {
-            provider: 'anthropic',
-            model: 'claude-sonnet-4-5',
-            apiKey: environment.anthropicApiKey
-        },
         groq: {
             provider: 'groq',
             model: 'meta-llama/llama-4-scout-17b-16e-instruct',
             apiKey: environment.groqApiKey
+        },
+
+        // PAGAS
+        openai: {
+            provider: 'openai',
+            model: 'gpt-4o-mini',
+            apiKey: environment.openaiApiKey
+        },
+        anthropic: {
+            provider: 'anthropic',
+            model: 'claude-sonnet-4-5',
+            apiKey: environment.anthropicApiKey
         }
     };
-
-    private activeProvider: AiProvider = 'google';
 
     getModel(): LanguageModel {
         const config = this.configs[this.activeProvider];
@@ -84,20 +88,18 @@ export class AiModelsService {
                 ? imageBase64.split('base64,')[1]
                 : imageBase64;
 
-            if (this.activeProvider === 'google') {
-                // Google exige base64 puro com mimeType
-                content.push({
-                    type: 'image',
-                    image: base64Data,
-                    mimeType: 'image/jpeg'
-                });
-            } else {
-                // OpenAI, Anthropic, Groq aceitam data URL
+            if (this.activeProvider === 'anthropic') {
                 content.push({
                     type: 'image',
                     image: imageBase64.includes('base64,')
                         ? imageBase64
                         : `data:image/jpeg;base64,${imageBase64}`
+                });
+            } else {
+                content.push({
+                    type: 'image',
+                    image: base64Data,
+                    mimeType: 'image/jpeg'
                 });
             }
         }
