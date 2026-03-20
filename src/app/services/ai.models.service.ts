@@ -4,6 +4,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createAnthropic } from '@ai-sdk/anthropic';
 import { createGroq } from '@ai-sdk/groq';
+import { environment } from '../../environments/environment';
 
 export type AiProvider = 'openai' | 'google' | 'anthropic' | 'groq';
 
@@ -20,22 +21,22 @@ export class AiModelsService {
         openai: {
             provider: 'openai',
             model: 'gpt-4o-mini',
-            apiKey: 'sk-...'
+            apiKey: environment.openaiApiKey
         },
         google: {
             provider: 'google',
             model: 'gemini-2.5-flash',
-            apiKey: 'AIzaSyBHexLpKN-0DJDUuon7WUYnYnUrM8R6TaU'
+            apiKey: environment.googleApiKey
         },
         anthropic: {
             provider: 'anthropic',
             model: 'claude-sonnet-4-5',
-            apiKey: 'sk-ant-...'
+            apiKey: environment.anthropicApiKey
         },
         groq: {
             provider: 'groq',
             model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-            apiKey: 'gsk_...'
+            apiKey: environment.groqApiKey
         }
     };
 
