@@ -12,6 +12,7 @@ import {
     IonCardHeader,
     IonCardTitle,
     IonCardContent,
+    IonModal,
     ToastController
 } from '@ionic/angular/standalone';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
@@ -21,7 +22,6 @@ import { addIcons } from 'ionicons';
 import { camera, scan, refresh, alertCircle } from 'ionicons/icons';
 import { Capacitor } from '@capacitor/core';
 import { OcrService } from '../services/ocr.service';
-
 @Component({
     selector: 'app-home',
     templateUrl: 'home.page.html',
@@ -41,18 +41,21 @@ import { OcrService } from '../services/ocr.service';
         IonCardHeader,
         IonCardTitle,
         IonCardContent,
+        IonModal,
         ImageCropperComponent
     ]
 })
 export class HomePage {
     @ViewChild(ImageCropperComponent) imageCropper!: ImageCropperComponent;
+    @ViewChild('modalCapturarImagem', { static: false }) modalCapturarImagem!: IonModal;
 
     croppedImageBase64: string = '';
     showCropper = false;
     isLoading = false;
     hasValidImage = false;
-
     imageFile: File | undefined = undefined;
+    modalWidth = 0;
+    modalHeight = 0;
 
     constructor(private toastController: ToastController,
         private ocrService: OcrService
@@ -123,6 +126,7 @@ export class HomePage {
     }
 
     private loadImageFromDataUrl(dataUrl: string): void {
+        this.modalCapturarImagem.present();
         const blob = this.base64ToBlob(dataUrl);
         this.imageFile = new File([blob], 'foto.jpg', { type: 'image/jpeg' });
         this.showCropper = true;
@@ -202,5 +206,6 @@ export class HomePage {
         this.imageFile = undefined;
         this.croppedImageBase64 = '';
         this.hasValidImage = false;
+        this.modalCapturarImagem?.dismiss();
     }
 }

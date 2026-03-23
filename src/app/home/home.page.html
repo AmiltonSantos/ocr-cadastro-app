@@ -18,41 +18,6 @@
     <ion-progress-bar type="indeterminate"></ion-progress-bar>
   }
 
-  <!-- Cropper -->
-  @if (showCropper) {
-    <div class="cropper-container">
-      <div class="cropper-actions">
-        <ion-button expand="block" (click)="processImage()">
-          <ion-icon name="scan" slot="start"></ion-icon>
-          Processar imagem
-        </ion-button>
-        <ion-button expand="block" (click)="resetCropper()" [disabled]="isLoading">
-          <ion-icon name="refresh" slot="start"></ion-icon>
-          Cancelar
-        </ion-button>
-      </div>
-
-      <image-cropper 
-        class="custom-cropper"
-        [imageFile]="imageFile" 
-        [maintainAspectRatio]="false" 
-        [aspectRatio]="4 / 3" 
-        format="png"
-        (imageCropped)="imageCropped($event)" 
-        (imageLoaded)="imageLoaded()" 
-        (cropperReady)="cropperReady()"
-        (loadImageFailed)="loadImageFailed()">
-      </image-cropper>
-
-      <div class="cropper-header">
-        <div class="header-dot"></div>
-        <span class="header-title">Recorte a imagem</span>
-        <span class="header-badge">4 : 3</span>
-      </div>
-
-    </div>
-  }
-
   <!-- Preview -->
   @if (croppedImageBase64 && !showCropper) {
     <ion-card>
@@ -65,3 +30,41 @@
     </ion-card>
   }
 </ion-content>
+
+<!-- Modal para exibir uma imagem anexa -->
+<ion-modal class="styleModalCapturarImagem" #modalCapturarImagem>
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <div class="cropper-actions">
+          <ion-button expand="block" (click)="processImage()">
+            <ion-icon name="scan" slot="start"></ion-icon>
+            Processar imagem
+          </ion-button>
+          <ion-button expand="block" (click)="resetCropper()" [disabled]="isLoading">
+            <ion-icon name="refresh" slot="start"></ion-icon>
+            Cancelar
+          </ion-button>
+        </div>        
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <!-- Cropper -->
+      @if (showCropper) {
+        <div class="cropper-container">
+          <image-cropper 
+            class="custom-cropper"
+            [imageFile]="imageFile" 
+            [maintainAspectRatio]="false" 
+            [aspectRatio]="4 / 3" 
+            format="png"
+            (imageCropped)="imageCropped($event)" 
+            (imageLoaded)="imageLoaded()" 
+            (cropperReady)="cropperReady()"
+            (loadImageFailed)="loadImageFailed()">
+          </image-cropper>
+        </div>
+      }
+    </ion-content>
+  </ng-template>
+</ion-modal>

@@ -150,7 +150,7 @@
     }
 
     &:last-child {
-      --background: rgba(255, 255, 255, 0.06);
+      --background: linear-gradient(135deg, #1057b4 0%, #9cfcff 100%);
       --background-activated: rgba(255, 255, 255, 0.1);
       --border-width: 1px;
       --border-style: solid;
@@ -188,4 +188,13 @@
     flex-direction: column;
     gap: 8px;
   }
+}
+
+.styleModalCapturarImagem {
+  --min-width: 60%;
+  --height: 90%;
+  --border-radius: 16px;
+  --border-color: #005c63;
+  --border-width: 1px;
+  --border-style: solid;
 }
